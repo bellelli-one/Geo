@@ -136,7 +136,10 @@ def create_raster_masks():
                     all_touched=True,
                     dtype=np.uint8
                 )
-
+            if full_mask.max() == 0:
+                print(f"\n[ИНФО] Для изображения {img_path} не найдено валидных геометрий. Маска пуста. Пропускаем.")
+                skipped_count += 1
+                continue
             base_img_name = os.path.splitext(os.path.basename(img_path))[0]
             output_mask_path = os.path.join(RASTER_MASKS_DIR, f"{base_img_name}_mask.tif")
 
@@ -160,6 +163,8 @@ def create_raster_masks():
     print("\n--- ПРЕПРОЦЕССИНГ УСПЕШНО ЗАВЕРШЕН ---")
     print(f"Создан новый индексный файл: {NEW_INDEX_FILE}")
     print(f"Всего обработано и сохранено масок: {len(new_df)}")
+    if skipped_count > 0:
+        print(f"Было пропущено изображений с пустыми масками: {skipped_count}")
 
 if __name__ == '__main__':
     create_raster_masks()
